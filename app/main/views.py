@@ -10,4 +10,13 @@ from .forms import NameForm
 def index():
     return render_template('index.html')
 
+from ..decorators import admin_required, permission_required
 
+from ..models import Permission
+from flask_login import login_required
+
+@main.route('/admin')
+@login_required
+@admin_required
+def for_admins_only():
+    return "For administrators!"
