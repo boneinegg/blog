@@ -11,9 +11,9 @@ class Config:
     MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or '316786195@qq.com'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'lp137..0!#'
-    BLOG_MAIL_SUBJECT_PREFIX = '[Flasky]'
+    BLOG_MAIL_SUBJECT_PREFIX = '[Blog]'
     BLOG_MAIL_SENDER = '316786195@qq.com'
-    BLOG_ADMIN = os.environ.get('FLASKY_ADMIN') or '316786195@qq.com'
+    BLOG_ADMIN = os.environ.get('BLOG_ADMIN') or '316786195@qq.com'
 
     @staticmethod
     def init_app(app):
