@@ -9,7 +9,7 @@
         </h1>
         {% if user.name or user.location %}
         <p>
-            {% if user.name %}{{ user.username }} {% endif %}
+            {% if user.name %}{{ user.name }} {% endif %}
             {% if user.location %}
                 From <a href="http://map.baidu.com/?q={{ user.location }}">
                 {{ user.location }}
