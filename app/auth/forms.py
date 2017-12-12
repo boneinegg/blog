@@ -1,3 +1,4 @@
+#--*-- coding: utf-8 --*--
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, Regexp, EqualTo
@@ -38,4 +39,21 @@ class ChangePasswordForm(FlaskForm):
         DataRequired(), EqualTo('password2', message='Passwords must match.')])
     password2 = PasswordField('Confirm new password', validators=[DataRequired()])
     submit = SubmitField('Change password')
+
+class PasswordResetRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()])
+    submit = SubmitField('Reset Password')
+
+class PasswordResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()])
+    password = PasswordField('New Password', validators=[
+        DataRequired(), EqualTo('password2', message="Password must match.")])
+    password2 = PasswordField('Confirm Password', validators=[DataRequired()])
+    submit = SubmitField('Reset Password')
+
+    def validater_email(self, field):
+        if User.query.filter_by(email=field.data).first() is None:
+            raise ValidationError('Unknown email.')
 
