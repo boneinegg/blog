@@ -3,8 +3,8 @@ from wtforms import SubmitField, StringField, TextAreaField, BooleanField, Selec
 from wtforms.validators import DataRequired, Length, Email, Regexp
 from ..models import Role, User
 
-class NameForm(FlaskForm):
-	name = StringField('你的名字？', validators=[DataRequired()])
+class PostForm(FlaskForm):
+	body = TextAreaField('What\'s on your mind?', validators=[DataRequired()])
 	submit = SubmitField('提交')
 
 class EditProfileForm(FlaskForm):
