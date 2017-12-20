@@ -58,6 +58,19 @@ def edit(id):
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
 
+@main.route('/delete/<int:id>')
+@login_required
+def delete(id):
+    post = Post.query.get_or_404(id)
+    if current_user == post.author or \
+        current_user.can(Permission.ADMIN):
+            db.session.delete(post)
+            flash('The post has been deleted.')
+            return redirect(url_for('.index'))
+    else:
+        abort(403)
+    return render_template('index.html')
+
 #权限验证例子
 from ..decorators import admin_required, permission_required
 
