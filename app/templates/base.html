@@ -4,6 +4,8 @@
 
 {% block head %}
     {{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/blog.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='images/blog.ico') }}" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 {% endblock %}
 

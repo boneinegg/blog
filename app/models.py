@@ -6,6 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from flask import current_app, request
 from datetime import datetime
+from markdown import markdown
+import bleach
 
 #权限全局变量
 class Permission:
@@ -53,6 +55,33 @@ class Post(db.Model):
 	body = db.Column(db.Text)
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	body_html = db.Column(db.Text)
+
+	@staticmethod#markdown转换html
+	def on_changed_body(target, value, oldvalue, initiator):
+		allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+						'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+						'h1', 'h2', 'h3', 'p']
+		target.body_html = bleach.linkify(bleach.clean(
+			markdown(value, output_format='html'),
+			tags=allowed_tags, strip=True))
+
+	@staticmethod#虚拟博客
+	def generate_fake(count=100):
+		from random import randint, seed
+		import forgery_py
+
+		seed()
+		user_count = User.query.count()
+		for i in range(count):
+			u = User.query.offset(randint(0, user_count-1)).first()
+			p = Post(body=forgery_py.lorem_ipsum.sentences(randint(1, 5)),
+					 timestamp=forgery_py.date.date(True),
+					 author=u)
+			db.session.add(p)
+			db.session.commit()
+
+db.event.listen(Post.body, 'set', Post.on_changed_body)
 
 class User(UserMixin, db.Model):
 	__tablename__ = 'users'
@@ -70,7 +99,30 @@ class User(UserMixin, db.Model):
 	avatar_hash = db.Column(db.String(32))
 	posts = db.relationship('Post', backref='author', lazy='dynamic')
 
-#初始化用户权限
+#虚拟数据
+	@staticmethod
+	def generate_fake(count=100):
+		from sqlalchemy.exc import IntegrityError
+		from random import seed
+		import forgery_py
+
+		seed()
+		for i in range(count):
+			u = User(email=forgery_py.internet.email_address(),
+					 username=forgery_py.internet.user_name(),
+					 password=forgery_py.lorem_ipsum.word(),
+					 confirmed=True,
+					 name=forgery_py.name.full_name(),
+					 location=forgery_py.address.city(),
+					 about_me=forgery_py.lorem_ipsum.sentence(),
+					 member_since=forgery_py.date.date(True))
+		db.session.add(u)
+		try:
+			db.session.commit()
+		except IntegrityError:
+			db.session.rollback()
+
+		#初始化用户权限
 	def __init__(self, **kwargs):
 		super(User, self).__init__(**kwargs)
 		if self.role is None:

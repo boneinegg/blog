@@ -14,6 +14,7 @@ class Config:
     BLOG_MAIL_SUBJECT_PREFIX = '[Blog]'
     BLOG_MAIL_SENDER = '316786195@qq.com'
     BLOG_ADMIN = os.environ.get('BLOG_ADMIN') or '316786195@qq.com'
+    BLOG_PER_PAGE = 10
 
     @staticmethod
     def init_app(app):
