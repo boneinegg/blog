@@ -2,10 +2,10 @@
 from flask import render_template, flash, \
     redirect, url_for, request, current_app, abort, make_response
 from .. import db
-from ..models import User, Role, Post
+from ..models import User, Role, Post, Comment
 from ..email import send_email
 from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
 from flask_login import current_user, login_required
 
 #主页路由
@@ -59,10 +59,27 @@ def user(username):
     posts = pagination.items
     return render_template('user.html', user=user, posts=posts,
                            pagination=pagination)
-@main.route('/post/<int:id>')
+
+@main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
-    return render_template('post.html', posts=[post])
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(body=form.body.data, post=post,
+                          author=current_user._get_current_object())
+        db.session.add(comment)
+        flash('Your comment has been published.')
+        return redirect(url_for('.post', id=post.id, page=-1))
+    page = request.args.get('page', 1, type=int)
+    if page == -1:
+        page = (post.comments.count() - 1)/ \
+            current_app.config['BLOG_COMMENTS_PER_PAGE'] + 1
+    pagination = post.comments.order_by(Comment.timestamp.desc()).paginate(
+        page, per_page=current_app.config['BLOG_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    return render_template('post.html', posts=[post], comments=comments,
+                           pagination=pagination, form=form)
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -88,7 +105,7 @@ def delete(id):
         current_user.can(Permission.ADMIN):
             db.session.delete(post)
             flash('The post has been deleted.')
-            return redirect(url_for('.user', username=current_user.username))
+            return redirect(url_for('.index'))
     else:
         abort(403)
     return render_template('index.html')
@@ -193,7 +210,7 @@ def followers(username):
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = u.followers.paginate(
-        page, per_page=20, error_out=False)
+        page, per_page=current_app.config['BLOG_FOLLOWERS_PER_PAGE'], error_out=False)
     follows = [{'user': item.follower, 'timestamp': item.timestamp}
                for item in pagination.items]
     return render_template('followers.html', user=user, title='Followers of',
@@ -208,7 +225,7 @@ def followed_by(username):
         return redirect(url_for('.index'))
     page = request.args.get('page', 1, type=int)
     pagination = u.followed.paginate(
-        page, per_page=20, error_out=False)
+        page, per_page=current_app.config['BLOG_FOLLOWERS_PER_PAGE'], error_out=False)
     follows = [{'user': item.followed, 'timestamp': item.timestamp}
                for item in pagination.items]
     return render_template('followers.html', user=user, title='Followed by',

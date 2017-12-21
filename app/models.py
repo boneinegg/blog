@@ -49,6 +49,25 @@ class Role(db.Model):
 	def __repr__(self):
 		return '<Role %r>' % self.name
 
+class Comment(db.Model):
+	__tablemame__ = 'comments'
+	id = db.Column(db.Integer, primary_key=True)
+	body = db.Column(db.Text)
+	body_html = db.Column(db.Text)
+	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+	disabled = db.Column(db.Boolean)
+
+	@staticmethod
+	def on_changed_body(target, value, oldvalue, initiator):
+		allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i',
+						'strong']
+		target.body_html = bleach.linkify(bleach.clean(
+			markdown(value, output_format='html'), tags=allowed_tags, strip=True))
+
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)
+
 class Post(db.Model):
 	__tablename__ = 'posts'
 	id = db.Column(db.Integer, primary_key=True)
@@ -56,6 +75,7 @@ class Post(db.Model):
 	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 	body_html = db.Column(db.Text)
+	comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
 	@staticmethod#markdown转换html
 	def on_changed_body(target, value, oldvalue, initiator):
@@ -113,6 +133,16 @@ class User(UserMixin, db.Model):
 	followers = db.relationship('Follow', foreign_keys=[Follow.followed_id],
 							   backref=db.backref('followed', lazy='joined'),
 							   lazy='dynamic', cascade='all, delete-orphan')
+	comments = db.relationship('Comment', backref='author', lazy='dynamic')
+
+#关注自己
+	@staticmethod
+	def add_self_follows():
+		for user in User.query.all():
+			if not user.is_following(user):
+				user.follow(user)
+				db.session.add(user)
+				db.session.commit()
 
 #虚拟数据
 	@staticmethod
@@ -148,7 +178,7 @@ class User(UserMixin, db.Model):
 		if self.email is not None and self.avatar_hash is not None:
 			self.avatar_hash = hashlib.md5(
 				self.email.encode('utf-8')).hexdigest()
-
+		self.followed.append(Follow(followed=self))
 #密码验证
 	@property
 	def password(self):
@@ -264,7 +294,7 @@ class User(UserMixin, db.Model):
 	@property
 	def followed_posts(self):
 		return Post.query.join(Follow, Follow.followed_id==Post.author_id)\
-			.filter(Follow.follwer_id==self.id)
+			.filter(Follow.follower_id==self.id)
 
 	def __repr__(self):
 		return '<User %r>' % self.username

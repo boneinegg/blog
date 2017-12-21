@@ -28,7 +28,7 @@
             <p>Member since {{ moment(user.member_since).format('L') }}.<br>
                 Last seen {{ moment(user.last_seen).fromNow() }}.
             </p>
-            <p>{{ user.posts.count() }} blog posts.</p>
+            <p>{{ user.posts.count() }} blog posts. {{ user.comments.count() }} comments.</p>
             <p>
             {% if current_user != user and current_user.can(Permission.FOLLOW) %}
                 {% if not current_user.is_following(user) %}
@@ -37,8 +37,8 @@
                 <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
                 {% endif %}
             {% endif %}
-            <a href="{{ url_for('.followers', username=user.username) }}">粉丝：<span class="badge">{{ user.followers.count() }}</span> </a>
-            <a href="{{ url_for('.followed_by', username=user.username) }}">关注：<span class="badge">{{ user.followed.count() }}</span> </a>
+            <a href="{{ url_for('.followers', username=user.username) }}">粉丝：<span class="badge">{{ user.followers.count() - 1 }}</span> </a>
+            <a href="{{ url_for('.followed_by', username=user.username) }}">关注：<span class="badge">{{ user.followed.count() - 1 }}</span> </a>
             {% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}
             | <span class="label label-default">Follows you</span>
             {% endif %}
