@@ -60,6 +60,7 @@ def user(username):
     return render_template('user.html', user=user, posts=posts,
                            pagination=pagination)
 
+#文章及其评论页面
 @main.route('/post/<int:id>', methods=['GET', 'POST'])
 def post(id):
     post = Post.query.get_or_404(id)
@@ -72,15 +73,16 @@ def post(id):
         return redirect(url_for('.post', id=post.id, page=-1))
     page = request.args.get('page', 1, type=int)
     if page == -1:
-        page = (post.comments.count() - 1)/ \
-            current_app.config['BLOG_COMMENTS_PER_PAGE'] + 1
-    pagination = post.comments.order_by(Comment.timestamp.desc()).paginate(
+        page = int((post.comments.count() - 1)/ \
+            current_app.config['BLOG_COMMENTS_PER_PAGE'] + 1)
+    pagination = post.comments.order_by(Comment.timestamp.asc()).paginate(
         page, per_page=current_app.config['BLOG_COMMENTS_PER_PAGE'],
         error_out=False)
     comments = pagination.items
     return render_template('post.html', posts=[post], comments=comments,
                            pagination=pagination, form=form)
 
+#编辑文章
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit(id):
@@ -97,6 +99,7 @@ def edit(id):
     form.body.data = post.body
     return render_template('edit_post.html', form=form)
 
+#删除文章
 @main.route('/delete/<int:id>')
 @login_required
 def delete(id):
@@ -109,6 +112,33 @@ def delete(id):
     else:
         abort(403)
     return render_template('index.html')
+
+#用户评论
+@main.route('/comments/<username>')
+@login_required
+def show_comments(username):
+    user = User.query.filter_by(username=username).first()
+    page = request.args.get('page', 1, type=int)
+    pagination = user.comments.order_by(Comment.timestamp.desc()).paginate(
+        page, per_page=current_app.config['BLOG_COMMENTS_PER_PAGE'],
+        error_out=False)
+    comments = pagination.items
+    return render_template('comments.html', comments=comments,
+                           pagination=pagination)
+
+#删除评论
+@main.route('/delete-comment/<int:id>')
+@login_required
+def delete_comment(id):
+    comment = Comment.query.get_or_404(id)
+    username = comment.author.username
+    if current_user == comment.author or \
+        current_user.is_administrator():
+        db.session.delete(comment)
+        flash('The comment has been deleted.')
+    else:
+        abort(403)
+    return redirect(url_for('.show_comments', username=username))
 
 #权限验证例子
 from ..decorators import admin_required, permission_required

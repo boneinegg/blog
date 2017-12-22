@@ -1,3 +1,9 @@
+{% extends 'base.html' %}
+{% import '_macros.html' as macros %}
+
+{% block title %}Blog - Comments{% endblock %}
+
+{% block page_content %}
 <ul class="comments">
     {% for comment in comments %}
     <li class="comment">
@@ -17,6 +23,11 @@
                 {% endif %}
             </div>
             <div class="comment-footer">
+                {% if comment.post %}
+                 <a href="{{ url_for('.post', id=comment.post.id) }}">
+                    <span class="label label-default">Permalink</span>
+                </a>
+                {% endif %}
                 {% if current_user == comment.author or current_user.is_administrator() %}
                 <a href="{{ url_for('.delete_comment', id=comment.id) }}">
                     <span class="label label-warning">Delete</span>
@@ -27,3 +38,9 @@
     </li>
     {% endfor %}
 </ul>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.show_comments', username=current_user.username) }}
+</div>
+{% endif %}
+{% endblock %}
