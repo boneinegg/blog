@@ -67,6 +67,25 @@ class Comment(db.Model):
 		target.body_html = bleach.linkify(bleach.clean(
 			markdown(value, output_format='html'), tags=allowed_tags, strip=True))
 
+	# json_comment
+	def to_json(self):
+		json_comment = {
+			'url': url_for('api.get_comment', id=self.id, _external=True),
+			'post': url_for('api.get_post', id=self.post_id, _external=True),
+			'body': self.body,
+			'body_html': self.body_html,
+			'timestamp': self.timestamp,
+			'author': url_for('api.get_user', id=self.author_id, _external=True),
+		}
+		return json_comment
+
+	@staticmethod
+	def from_json(json_comment):
+		body = json_comment.get('body')
+		if body is None or body == '':
+			raise ValidationError('Comment does not have a body.')
+		return Comment(body=body)
+
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 class Post(db.Model):
@@ -86,8 +105,28 @@ class Post(db.Model):
 		target.body_html = bleach.linkify(bleach.clean(
 			markdown(value, output_format='html'),
 			tags=allowed_tags, strip=True))
+	# json_post
+	def to_json(self):
+		json_post = {
+			'url': url_for('api.get_post', id=self.id, _external=True),
+			'body': self.body,
+			'body_html': self.body_html,
+			'timestamp': self.timestamp,
+			'aurhor': url_for('api.get_user', id=self.author_id, _external=True),
+			'comments': url_for('api.get_post_comments', id=self.id, _external=True),
+			'comments_count': self.comments.count()
+		}
+		return json_post
 
-	@staticmethod#虚拟博客
+	@staticmethod
+	def from_json(json_post):
+		body = json_post.get('body')
+		if body is None or body == '':
+			raise ValidationError('Post does not have a body')
+		return Post(body=body)
+
+	# 虚拟博客
+	@staticmethod
 	def generate_fake(count=100):
 		from random import randint, seed
 		import forgery_py
@@ -297,6 +336,7 @@ class User(UserMixin, db.Model):
 		return Post.query.join(Follow, Follow.followed_id==Post.author_id)\
 			.filter(Follow.follower_id==self.id)
 
+	#json_user
 	def to_json(self):
 		json_user = {
 			'url': url_for('api.get_user', id=self.id, _external=True),
@@ -304,8 +344,8 @@ class User(UserMixin, db.Model):
 			'member_since': self.member_since,
 			'last_seen': self.last_seen,
 			'posts': url_for('api.get_user_posts', id=self.id, _external=True),
-			'followed_posts': url_for('api.get_user_followed_posts', id=self.id, _external=True)
-			'post_count': self.posts.count()
+			'followed_posts': url_for('api.get_user_followed_posts', id=self.id, _external=True),
+			'post_count': self.posts.count(),
 		}
 		return json_user
 
@@ -319,9 +359,8 @@ class User(UserMixin, db.Model):
 		try:
 			data = s.load(token)
 		except:
-
-
-
+			return None
+		return User.query.get(data['id'])
 
 
 	def __repr__(self):
