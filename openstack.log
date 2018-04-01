@@ -1,0 +1,42 @@
+2018-04-01 02:51:09,198 DEBUG: openstack.task_manager Manager openstack:RegionOne running task clustering.GET.profile-types
+2018-04-01 02:51:09,228 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task clustering.GET.profile-types in 0.029419660568237305s
+2018-04-01 02:52:01,063 DEBUG: openstack.task_manager Manager openstack:RegionOne running task clustering.GET.profile-types
+2018-04-01 02:52:01,077 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task clustering.GET.profile-types in 0.014101743698120117s
+2018-04-01 02:52:20,717 DEBUG: openstack.task_manager Manager openstack:RegionOne running task clustering.GET.profile-types
+2018-04-01 02:52:21,131 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task clustering.GET.profile-types in 0.4129977226257324s
+2018-04-01 02:56:42,476 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.images.detail
+2018-04-01 02:56:46,015 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.images.detail in 3.538822650909424s
+2018-04-01 02:59:31,941 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.servers.detail
+2018-04-01 02:59:36,294 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.servers.detail in 4.351888656616211s
+2018-04-01 02:59:36,294 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.flavors.detail
+2018-04-01 02:59:37,531 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.flavors.detail in 1.2369153499603271s
+2018-04-01 02:59:37,534 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.images.detail
+2018-04-01 02:59:49,321 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.images.detail in 11.78688931465149s
+2018-04-01 03:13:55,735 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.os-keypairs
+2018-04-01 03:14:01,629 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.os-keypairs in 5.885677337646484s
+2018-04-01 03:14:01,629 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.os-keypairs
+2018-04-01 03:14:02,202 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.os-keypairs in 0.5724270343780518s
+2018-04-01 03:14:02,202 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.POST.os-keypairs
+2018-04-01 03:14:05,168 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.POST.os-keypairs in 2.965634822845459s
+2018-04-01 03:21:00,836 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.servers.detail
+2018-04-01 03:21:01,367 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.servers.detail in 0.5305137634277344s
+2018-04-01 03:21:01,368 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.flavors.detail
+2018-04-01 03:21:03,041 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.flavors.detail in 1.6727147102355957s
+2018-04-01 03:21:03,044 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.images.detail
+2018-04-01 03:21:03,370 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.images.detail in 0.3255300521850586s
+2018-04-01 03:21:03,428 DEBUG: openstack.task_manager Manager openstack:RegionOne running task network.GET.networks
+2018-04-01 03:21:42,206 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task network.GET.networks in 38.77743172645569s
+2018-04-01 03:21:42,207 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.os-keypairs
+2018-04-01 03:21:42,271 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.os-keypairs in 0.06355571746826172s
+2018-04-01 03:21:42,272 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.images
+2018-04-01 03:21:42,385 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.images in 0.11338138580322266s
+2018-04-01 03:21:42,386 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.images
+2018-04-01 03:21:42,545 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.images in 0.1586627960205078s
+2018-04-01 03:21:42,545 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.flavors
+2018-04-01 03:21:42,555 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.flavors in 0.00943136215209961s
+2018-04-01 03:21:42,557 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.flavors
+2018-04-01 03:21:42,594 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.flavors in 0.035965919494628906s
+2018-04-01 03:21:42,596 DEBUG: openstack.task_manager Manager openstack:RegionOne running task network.GET.networks
+2018-04-01 03:21:43,175 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task network.GET.networks in 0.5790655612945557s
+2018-04-01 03:21:43,176 DEBUG: openstack.task_manager Manager openstack:RegionOne running task compute.GET.os-keypairs
+2018-04-01 03:21:43,287 DEBUG: openstack.task_manager Manager openstack:RegionOne ran task compute.GET.os-keypairs in 0.11159896850585938s
